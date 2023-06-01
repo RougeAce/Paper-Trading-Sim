@@ -31,6 +31,8 @@ def ticker_exists(ticker):
     except:
         return False
 
+def stock_value(ticker):
+    return yf.Ticker(ticker).info['currentPrice']
 
 
 
