@@ -1,24 +1,39 @@
-import pandas_market_calendars as mcal
+import dependines
+import csv
 from datetime import datetime
-from pytz import timezone
 
-def is_nyse_open():
-    nyse = mcal.get_calendar('NYSE')
-    tz = timezone('America/New_York')
-    now = datetime.now(tz)
+def check_exceptions(ticker):
+    if dependines.is_nyse_open() == False:
+        return 1000
+    if dependines.ticker_exists(ticker) == False:
+        return 1001
+    return 0
 
-    schedule = nyse.schedule(start_date=now, end_date=now)
-
-    if not schedule.empty:
-        market_open = schedule.iloc[0].market_open
-        market_close = schedule.iloc[0].market_close
-        if market_open <= now < market_close:
-            return True
-        else:
-            return False
+def buy_stock(ticker, amount, account):
+    exception_code = check_exceptions(ticker)
+    if exception_code != 0:
+        return exception_code
     else:
-        return False
+        with open(f"{account}_stocks.csv", "a") as f:
+            writer = csv.writer(f)
+            date = datetime.now().strftime("%Y-%m-%d")
+            writer.writerow(["BUYING", ticker, amount, date])
+        return 0
 
-print(is_nyse_open())
+
+def sell_stock(ticker, amount, account):
+    exception_code = check_exceptions(ticker)
+    if exception_code != 0:
+        return exception_code
+    else:
+        with open(f"{account}_stocks.csv", "a") as f:
+            writer = csv.writer(f)
+            date = datetime.now().strftime("%Y-%m-%d")
+            writer.writerow(["SELLING", ticker, amount, date])
+        return 0
+
+
+
+
 
 
