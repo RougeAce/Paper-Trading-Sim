@@ -2,6 +2,7 @@ import pandas_market_calendars as mcal
 from datetime import datetime
 from pytz import timezone
 import yfinance as yf
+import os
 
 
 
@@ -33,6 +34,14 @@ def ticker_exists(ticker):
 
 def stock_value(ticker):
     return yf.Ticker(ticker).info['currentPrice']
+
+
+
+
+
+
+
+
 
 
 
