@@ -1,5 +1,8 @@
 import Function_Exucations
 
+'''The market is closed as it is the weekend. DO NOT FORGOT ON THE WEEKDAY to change it to pulling the price 
+for yfinaance rather then your made up place '''
+
 def request_credentials():
     command1 = input("--sign in \n"
                      "--sign up\n")
@@ -43,9 +46,11 @@ def actions(account):
         print("Error: An unknown error happened")
     elif result == 6:
         print("Error: Could not proccese cash")
+    elif result == 5000:
+        print("You do not have the stocks to cover this trade")
     elif result[0] == 4:
         print(f"Succesfully {result[1]} {result[2]} shares of {result[3]} @ {result[6]}")
-        print(f"You have ${result[4]} left. The order costed {result[5]}")
+        print(f"You have ${result[4]} left. The order total was {result[5]}")
 
 
 def interpret(command2, account):
@@ -67,13 +72,15 @@ def interpret(command2, account):
 
     elif action == "--sell" and command_parts[1] == "STOCK":
         amount = int(command_parts[3])
-        result = Function_Exucations.sell_stock_check(ticker, amount, account)
+        result = Function_Exucations.sell_stock(ticker, amount, account)
         if result == 1000:
-            return 2
+            pass
         if result == 1001:
             return 3
+        if result == 3000:
+            return 6
         else:
-            return 4, action, amount, ticker
+            return result
 
 
     elif action == "--buy" and command_parts[1] == "OPTION":

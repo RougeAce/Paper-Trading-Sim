@@ -81,6 +81,51 @@ def file_exists(file_path):
     return os.path.isfile(file_path)
 
 
+##################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
+
+
+def sell_stock(ticker, amount, account):
+    file_path = f'{account}_STOCK.csv'
+    cash_path = f'{account}_CASH.csv'
+    # Get the necceray information for this portoflio to work
+    price_stock = 170
+    cost = price_stock * amount
+    if check_exceptions(ticker):
+        if file_exists(cash_path):
+            cash = float(cash_amount(cash_path))
+            stock_amount_owned = total_stocks_owned(file_path, ticker)
+            if cash == None:
+                return 3000 # 3000 means the cash could not be proccesed
+            if amount > stock_amount_owned:
+                return 5000 #5000 means there is not enough stocks to cover the cost
+            else:
+                date = datetime.now()
+                cash += cost
+                exacute_order("STOCK", "SELLING", ticker, price_stock, amount, cost, cash, date, file_path, cash_path)
+                return 4, "sold", amount, ticker, cash, cost, date
+        else:
+            return 5000
+
+
+
+
+    return 5
+
+def total_stocks_owned(file_path, ticker):
+    total = 0
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+        for line in lines[1:]:
+            data = line.strip().split(',')
+            if data[0] == 'STOCK' and data[2] == ticker:
+                if data[1] == 'BUYING':
+                    total += int(data[4])
+                elif data[1] == 'SELLING':
+                    total -= int(data[4])
+    return total
+
+
+
 
 
 
