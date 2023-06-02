@@ -23,13 +23,15 @@ def buy_stock(ticker, amount, account):
     if check_exceptions(ticker):
         if file_exists(cash_path):
             cash = float(cash_amount(cash_path))
+            if cash == None:
+                return 3000 # 3000 means the cash could not be proccesed
             if cash < cost:
                 return 4000 #4000 means there is not enough cash to cover the cost
             else:
                 date = datetime.now()
                 cash -= cost
                 exacute_order("STOCK", "BUYING", ticker, price_stock, amount, cost, cash, date, file_path, cash_path)
-                return True
+                return 4, "bought", amount, ticker, cash, cost, date
         else:
             cash = 100000
             if cash < cost:
@@ -38,19 +40,19 @@ def buy_stock(ticker, amount, account):
                 date = datetime.now()
                 cash -= cost
                 exacute_order("STOCK", "BUYING", ticker, price_stock, amount, cost, cash, date, file_path, cash_path)
-                return True
+                return 4, "bought", amount, ticker, cash, cost, date
 
 
 
 
-    return False
+    return 5
 
 def cash_amount(file_path):
     if file_exists(file_path):
         with open(file_path, 'r') as f:
             lines = f.readlines()
-            if len(lines) >= 2:
-                return lines[1].strip()
+            if len(lines) >= 1:
+                return lines[-1].strip()
     else:
         with open(file_path, "a") as f:
             writer = csv.writer(f)

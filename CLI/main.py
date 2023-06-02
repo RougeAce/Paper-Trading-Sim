@@ -37,8 +37,15 @@ def actions(account):
     elif result == 3:
         print("Error: The ticker does not exist according to our records")
         request_credentials()
+    elif result == 4000:
+        print("Error: You do not have enough money for this order")
+    elif result == 5:
+        print("Error: An unknown error happened")
+    elif result == 6:
+        print("Error: Could not proccese cash")
     elif result[0] == 4:
-        print(f"Succesfully {result[1]} {result[2]} shares of {result[3]}")
+        print(f"Succesfully {result[1]} {result[2]} shares of {result[3]} @ {result[6]}")
+        print(f"You have ${result[4]} left. The order costed {result[5]}")
 
 
 def interpret(command2, account):
@@ -53,8 +60,10 @@ def interpret(command2, account):
             pass
         if result == 1001:
             return 3
+        if result == 3000:
+            return 6
         else:
-            return 4, action, amount, ticker
+            return result
 
     elif action == "--sell" and command_parts[1] == "STOCK":
         amount = int(command_parts[3])
