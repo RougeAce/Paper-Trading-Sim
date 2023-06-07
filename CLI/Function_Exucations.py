@@ -1,4 +1,5 @@
 from BackEnd import dependines
+import yfinance as yf
 import csv
 from datetime import datetime
 import os
@@ -18,7 +19,7 @@ def buy_stock(ticker, amount, account):
     file_path = f'{account}_STOCK.csv'
     cash_path = f'{account}_CASH.csv'
     # Get the necceray information for this portoflio to work
-    price_stock = 170
+    price_stock = dependines.stock_value(ticker)
     cost = price_stock * amount
     if check_exceptions(ticker):
         if file_exists(cash_path):
@@ -80,6 +81,18 @@ def exacute_order(type, action, ticker, price, amount,cost, cash, date,file_path
 def file_exists(file_path):
     return os.path.isfile(file_path)
 
+def cash_buy(ticker, amount, account):
+    price = dependines.stock_value(ticker)
+    share_amount = amount / price
+    return buy_stock(ticker, share_amount, account)
+
+def cash_sell(ticker, amount, account):
+    price = dependines.stock_value(ticker)
+    share_amount = amount / price
+    return sell_stock(ticker, share_amount, account)
+
+
+
 
 ##################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
 
@@ -88,7 +101,7 @@ def sell_stock(ticker, amount, account):
     file_path = f'{account}_STOCK.csv'
     cash_path = f'{account}_CASH.csv'
     # Get the necceray information for this portoflio to work
-    price_stock = 170
+    price_stock = dependines.stock_value(ticker)
     cost = price_stock * amount
     if check_exceptions(ticker):
         if file_exists(cash_path):
@@ -119,10 +132,46 @@ def total_stocks_owned(file_path, ticker):
             data = line.strip().split(',')
             if data[0] == 'STOCK' and data[2] == ticker:
                 if data[1] == 'BUYING':
-                    total += int(data[4])
+                    total += float(data[4])
                 elif data[1] == 'SELLING':
                     total -= int(data[4])
     return total
+
+
+def buy_option(ticker, amount, account):
+    file_path = f'{account}_STOCK.csv'
+    cash_path = f'{account}_CASH.csv'
+    # Get the necceray information for this portoflio to work
+    price_option = 170
+    price_stock = 170
+    cost = price_stock * amount * 100
+    if check_exceptions(ticker):
+        if file_exists(cash_path):
+            cash = float(cash_amount(cash_path))
+            if cash == None:
+                return 3000 # 3000 means the cash could not be proccesed
+            if cash < cost:
+                return 4000 #4000 means there is not enough cash to cover the cost
+            else:
+                date = datetime.now()
+                cash -= cost
+                exacute_order("OPTION", "BUYING", ticker, price_option, amount, cost, cash, date, file_path, cash_path)
+                return 4, "bought", amount, ticker, cash, cost, date
+        else:
+            cash = 100000
+            if cash < cost:
+                return 40000
+            else:
+                date = datetime.now()
+                cash -= cost
+                exacute_order("OPTION", "BUYING", ticker, price_option, amount, cost, cash, date, file_path, cash_path)
+                return 4, "bought", amount, ticker, cash, cost, date
+
+
+
+
+    return 5
+
 
 
 

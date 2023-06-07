@@ -33,7 +33,11 @@ def ticker_exists(ticker):
         return False
 
 def stock_value(ticker):
-    return yf.Ticker(ticker).info['currentPrice']
+    ticker = yf.Ticker(ticker)
+    data = ticker.history(period="1m")
+    spy_price = data["Close"].iloc[-1]
+    return spy_price
+
 
 
 
