@@ -1,4 +1,5 @@
 import Function_Exucations
+from BackEnd import buying_options
 
 '''The market is closed as it is the weekend. DO NOT FORGOT ON THE WEEKDAY to change it to pulling the price 
 for yfinaance rather then your made up place '''
@@ -63,7 +64,10 @@ def interpret(command2, account):
     print(command_parts)
     action = command_parts[0]
     ticker = command_parts[2]
-    denmenation = command_parts[3]
+    try:
+        denmenation = command_parts[3]
+    except:
+        pass
 
     if action == "--buy" and command_parts[1] == "STOCK" and denmenation == "SHARES":
         amount = int(command_parts[4])
@@ -116,10 +120,29 @@ def interpret(command2, account):
 
 
     elif action == "--buy" and command_parts[1] == "OPTION":
-        print(f"Buying option {ticker}")
+        amount = command_parts[3]
+        result = Function_Exucations.buy_option(ticker, amount, account)
+        if result == 1000:
+            pass
+        if result == 1001:
+            return 3
+        if result == 3000:
+            return 6
+        else:
+            return result
 
     elif action == "--sell" and command_parts[1] == "OPTION":
-        print(f"Selling option {ticker}")
+        amount = command_parts[3]
+
+        result = Function_Exucations.sell_call(ticker, amount, account)
+        if result == 1000:
+            pass
+        if result == 1001:
+            return 3
+        if result == 3000:
+            return 6
+        else:
+            return result
     elif command2 == "--current portfolio value":
         print(account_value(account))
         actions(account)
