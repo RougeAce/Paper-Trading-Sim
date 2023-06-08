@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 from BackEnd import Values
 from BackEnd import Excutions
+from BackEnd import buying_options
 
 
 def check_exceptions(ticker):
@@ -16,7 +17,7 @@ def check_exceptions(ticker):
 
 
 def buy_stock(ticker, amount, account):
-    file_path = f'{account}_STOCK.csv'
+    file_path = f'{account}_STOCKS.csv'
     cash_path = f'{account}_CASH.csv'
     # Get the necceray information for this portoflio to work
     price_stock = dependines.stock_value(ticker)
@@ -70,6 +71,19 @@ def exacute_order(type, action, ticker, price, amount,cost, cash, date,file_path
                 writer.writerow(['TYPE', "ACTION", "ASSET", "COST/ASSET", "Amount","TOTAL_COST", "CASH_LEFT", "DATE"])
             writer.writerow([type, action, ticker, price, amount, cost, cash, date])
 
+        with open(cash_path, "a") as f:
+            writer = csv.writer(f)
+            if fileE == False:
+                writer.writerow(['CASH'])
+            writer.writerow([cash])
+    if type == "OPTION":
+        fileE = file_exists(file_path)
+        with open(file_path, "a") as f:
+            writer = csv.writer(f)
+            if fileE == False:
+                writer.writerow(['TYPE', "ACTION", "ASSET", "COST/ASSET", "Amount", "TOTAL_COST", "CASH_LEFT", "DATE"])
+
+            writer.writerow([type, action, ticker, price, amount, cost, cash, date])
         with open(cash_path, "a") as f:
             writer = csv.writer(f)
             if fileE == False:
@@ -139,12 +153,13 @@ def total_stocks_owned(file_path, ticker):
 
 
 def buy_option(ticker, amount, account):
-    file_path = f'{account}_STOCK.csv'
+    if dependines.check_option(ticker) == False:
+        return 6000 # Means the ticker could not be proccesed
+    file_path = f'{account}_STOCKS.csv'
     cash_path = f'{account}_CASH.csv'
     # Get the necceray information for this portoflio to work
-    price_option = 170
-    price_stock = 170
-    cost = price_stock * amount * 100
+    price_option = buying_options.cost_options(ticker)
+    cost = float(price_option) * float(amount)
     if check_exceptions(ticker):
         if file_exists(cash_path):
             cash = float(cash_amount(cash_path))
@@ -167,10 +182,49 @@ def buy_option(ticker, amount, account):
                 exacute_order("OPTION", "BUYING", ticker, price_option, amount, cost, cash, date, file_path, cash_path)
                 return 4, "bought", amount, ticker, cash, cost, date
 
+def sell_call(ticker, amount, account):
+    if dependines.check_option(ticker) == False:
+        return 6000 # Means the ticker could not be proccesed
+    real_ticker = dependines.option_underlying(ticker)
+    file_path = f'{account}_STOCKS.csv'
+    cash_path = f'{account}_CASH.csv'
+    cash = float(cash_amount(cash_path))
+    price = buying_options.cost_options(ticker)
+    cost = float(price) * float(amount)
+    stock_amount_owned = total_stocks_owned(file_path, ticker)
+    if stock_amount_owned > stock_amount_owned:
+        return 4000
+    cash += float(cost)
+    exacute_order("OPTION", "SELLING", ticker, price, amount, cost, cash, datetime.today(), file_path, cash_path)
+    return 4, "SOLD", amount, ticker, cash, cost, datetime.today()
 
 
 
-    return 5
+
+
+
+
+
+
+
+
+
+def sell_put(ticker, amount, account):
+    if dependines.check_option(ticker) == False:
+        return 6000  # Means the ticker could not be proccesed
+    real_ticker = dependines.option_underlying(ticker)
+    file_path = f'{account}_STOCKS.csv'
+    cash_path = f'{account}_CASH.csv'
+    cash = float(cash_amount(cash_path))
+    price = buying_options.cost_options(ticker)
+    cost = float(price) * float(amount)
+    if (real_ticker * 100 * amount) > cash:
+        return 4000
+    cash += float(cost)
+    exacute_order("OPTION", "SELLING", ticker, price, amount, cost, cash, datetime.today(), file_path, cash_path)
+    return 4, "SOLD", amount, ticker, cash, cost, datetime.today()
+
+
 
 
 

@@ -34,9 +34,37 @@ def ticker_exists(ticker):
 
 def stock_value(ticker):
     ticker = yf.Ticker(ticker)
-    data = ticker.history(period="1m")
+    data = ticker.history(period="1d")
     spy_price = data["Close"].iloc[-1]
     return spy_price
+
+
+
+def check_option(ticker):
+    try:
+        ticker  = yf.Ticker(ticker)
+        ticker.info
+        return True
+    except:
+        return False
+
+def check_type(ticker):
+    for i in ticker:
+        if i == "P":
+            return "put"
+        else:
+            return "call"
+
+def option_underlying(ticker):
+    real_ticker = ""
+    for i in ticker:
+        try:
+            int(i)
+            return str(real_ticker)
+        except:
+            real_ticker += i
+    return False
+
 
 
 
