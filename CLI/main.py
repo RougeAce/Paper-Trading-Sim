@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import Function_Exucations
 from BackEnd import buying_options
+=======
+
+>>>>>>> c31df96 (Added odds file)
 
 '''The market is closed as it is the weekend. DO NOT FORGOT ON THE WEEKDAY to change it to pulling the price 
 for yfinaance rather then your made up place '''

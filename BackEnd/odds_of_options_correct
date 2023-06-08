@@ -1,0 +1,58 @@
+import yfinance as yf
+import dependines as BD
+
+
+def option_profit(ticker, target_price, Buy_in_price = None, BS = "B"):
+    # Check the ticker
+    try:
+        tickers = yf.Ticker(ticker)
+    except:
+        raise TypeError ("Error: Could not proccese the ticker")
+    
+    #Checks the type 
+    try:        
+        type = BD.check_type(ticker)
+    except:
+        raise TypeError ("Error: Could not proccese the type of option ")
+    
+    if Buy_in_price == None:
+        price = tickers.info['regularMarketPreviousClose']
+    else:
+        price = Buy_in_price
+    strike = tickers.info['strikePrice']
+        
+    if type == "put":
+        if BS == "B":
+            profit = ((strike - target_price) * 100) - price
+            if profit < 0:
+                return -price * 100
+            else:
+                return profit
+        if BS == "S":
+            profit = ((target_price - strike) * 100) + price 
+            if profit > price:
+                return price * 100
+            else:
+                return profit
+    if type == "call":
+        if BS == "B":
+            profit = ((target_price - strike) * 100) - price
+            if profit < 0:
+                return price * 100
+            else:
+                return profit
+        if BS == "S":
+            profit = ((strike - target_price) * 100) + price
+            if profit > price:
+                return price * 100
+            else:
+                return profit
+            
+            
+        
+        
+    
+
+      
+    
+

@@ -47,13 +47,23 @@ def check_option(ticker):
         return True
     except:
         return False
+    
 
 def check_type(ticker):
+    real_ticker = ""
     for i in ticker:
-        if i == "P":
-            return "put"
-        else:
-            return "call"
+        try:
+            int(i)
+        except:
+            real_ticker += i
+    if real_ticker[-1] == "C":
+        return "call"
+    if real_ticker[-1] == "P":
+        return "put"
+    else:
+        raise TypeError("Error: COuld not tell weather it was a call or put")
+        
+    
 
 def option_underlying(ticker):
     real_ticker = ""
@@ -64,6 +74,8 @@ def option_underlying(ticker):
         except:
             real_ticker += i
     return False
+
+
 
 
 
