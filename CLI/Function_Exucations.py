@@ -244,7 +244,7 @@ def calculate_account_value(account):
                 if row[0] == "OPTION":
                     value *= 100
                 cash += value
-            if row[1] == "SELLING":  # Fixed index from 2 to 1
+            elif row[1] == "SELLING":  # Fixed index from 2 to 1
                 ticker = row[2]
                 value = np.float64(dependines.stock_value(ticker)) * np.float64(row[4])
                 if row[0] == "OPTION":
