@@ -149,12 +149,11 @@ def interpret(command2, account):
             return result
     elif command2 == "--current portfolio value":
         print(account_value(account))
-        actions(account)
     else:
         return 1
 
 def account_value(account):
-    return Function_Exucations.calculate_account_value(f"{account}_stocks.csv")
+    return Function_Exucations.calculate_account_value(account)
 
 
 actions(request_credentials())
