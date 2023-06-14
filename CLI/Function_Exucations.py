@@ -6,6 +6,7 @@ import os
 from BackEnd import Values
 from BackEnd import Excutions
 from BackEnd import buying_options
+import numpy as np
 
 
 def check_exceptions(ticker):
@@ -223,6 +224,42 @@ def sell_put(ticker, amount, account):
     cash += float(cost)
     exacute_order("OPTION", "SELLING", ticker, price, amount, cost, cash, datetime.today(), file_path, cash_path)
     return 4, "SOLD", amount, ticker, cash, cost, datetime.today()
+
+import csv
+import numpy as np
+
+def calculate_account_value(account):
+    print(account)
+    stock_file = f"{account}_STOCKS.csv"
+    cash_file = f"{account}_CASH.csv"
+    cash = 0
+
+    with open(stock_file, "r") as f:
+        csv_reader = csv.reader(f)
+        # [TYPE,ACTION,ASSET,COST/ASSET,Amount,TOTAL_COST,CASH_LEFT,DATE]
+        for row in csv_reader:
+            if row[1] == "BUYING":
+                ticker = row[2]
+                value = np.float64(dependines.stock_value(ticker)) * np.float64(row[4])
+                if row[0] == "OPTION":
+                    value *= 100
+                cash += value
+            if row[1] == "SELLING":  # Fixed index from 2 to 1
+                ticker = row[2]
+                value = np.float64(dependines.stock_value(ticker)) * np.float64(row[4])
+                if row[0] == "OPTION":
+                    value *= 100
+                cash -= value
+
+    cash += float(cash_amount(cash_file))
+    return cash
+
+
+
+
+
+
+
 
 
 

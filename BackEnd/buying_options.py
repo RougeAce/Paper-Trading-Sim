@@ -12,4 +12,4 @@ def options_stirke_price(ticker, amount):
 def cost_options(ticker):
     return yf.Ticker("AAPL230609C00180000").info['regularMarketPreviousClose']  * 100
 
-print("Hello World")
+
